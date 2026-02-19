@@ -2,6 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 def get_ai_response(client, prompt):
     response = client.models.generate_content(
@@ -22,9 +23,10 @@ def main():
         raise RuntimeError("api key not found, check .env")
 
     client = genai.Client(api_key=api_key)
+    messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
     try:
-        response = get_ai_response(client, args.user_prompt)
+        response = get_ai_response(client, messages)
         
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
