@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from promts import system_prompt
+from call_functions import available_functions
 
 def get_ai_response(client, prompt):
     response = client.models.generate_content(
         model='gemini-2.5-flash',
         contents=prompt,
-        config=types.GenerateContentConfig(system_instruction=system_prompt),
+        config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt),
     )
     if response.usage_metadata is None:
         raise RuntimeError("API request failed: usage metadata is missing")
@@ -37,7 +38,11 @@ def main():
             print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
             print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
             print("-" * 20)
-        print(response.text)
+        if response.function_calls:
+            for function_call in response.function_calls:
+                print(f"Calling function: {function_call.name}({function_call.args})")
+        if not response.function_calls:
+            print(response.text)
     except Exception as e:
         print(f"An error occurred: {e}")
 
