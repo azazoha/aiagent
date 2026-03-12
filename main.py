@@ -3,10 +3,13 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from promts import system_prompt
 
 def get_ai_response(client, prompt):
     response = client.models.generate_content(
-        model='gemini-2.5-flash', contents=prompt
+        model='gemini-2.5-flash',
+        contents=prompt,
+        config=types.GenerateContentConfig(system_instruction=system_prompt),
     )
     if response.usage_metadata is None:
         raise RuntimeError("API request failed: usage metadata is missing")
