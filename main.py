@@ -4,7 +4,7 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from promts import system_prompt
+from prompts import system_prompt
 from call_function import available_functions, call_function
 
 def get_ai_response(client, prompt):
