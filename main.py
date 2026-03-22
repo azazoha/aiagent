@@ -7,6 +7,13 @@ from google.genai import types
 from prompts import system_prompt
 from call_function import available_functions, call_function
 
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Chatbot")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    return parser.parse_args()
+
 def get_ai_response(client, prompt):
     response = client.models.generate_content(
         model='gemini-2.5-flash',
@@ -18,10 +25,7 @@ def get_ai_response(client, prompt):
     return response
 
 def main():
-    parser = argparse.ArgumentParser(description="Chatbot")
-    parser.add_argument("user_prompt", type=str, help="User prompt")
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
-    args = parser.parse_args()
+    args = parse_args()
 
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
