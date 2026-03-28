@@ -1,6 +1,28 @@
 import unittest
 from unittest.mock import MagicMock
+from unittest.mock import patch
 from main import get_ai_response
+from main import parse_args
+
+
+class TestParseArgs(unittest.TestCase):
+    def test_basic_prompt(self):
+        with patch("sys.argv", ["main.py", "hello world"]):
+            args = parse_args()
+            self.assertEqual(args.user_prompt, "hello world")
+            self.assertFalse(args.verbose)
+
+    def test_verbose_flag(self):
+        with patch("sys.argv", ["main.py", "hello world", "--verbose"]):
+            args = parse_args()
+            self.assertEqual(args.user_prompt, "hello world")
+            self.assertTrue(args.verbose)
+
+    def test_missing_prompt_exits(self):
+        with patch("sys.argv", ["main.py"]):
+            with self.assertRaises(SystemExit):
+                parse_args()
+
 
 class TestAI(unittest.TestCase):
     def test_get_ai_response(self):
